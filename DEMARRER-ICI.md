@@ -23,14 +23,24 @@ Je développe une application CRM pour l'entreprise **ATEXIA** (La Réunion), sp
 
 - [x] Design et spec validés
 - [x] Plan 1 (Foundation) rédigé
-- [ ] Plan 1 à implémenter (Next.js + Supabase + Auth + PWA + Navigation)
+- [x] Task 1 — Next.js 16.2.6 initialisé (TypeScript strict, Tailwind, git)
+- [x] Task 2 — Dépendances installées (@supabase/ssr, zod, next-pwa, jest)
+- [x] Task 3 — Schéma SQL créé + Supabase configuré manuellement
+- [ ] Task 4 à 10 — restent à implémenter
 - [ ] Plans 2-6 à rédiger et implémenter
 
 ## Prochaine action
 
-Implémenter le **Plan 1** en utilisant le skill `superpowers:subagent-driven-development` ou `superpowers:executing-plans`.
+Continuer le **Plan 1** à partir de la **Task 4** en utilisant `superpowers:subagent-driven-development`.
 
-Commande : *"Implémente le Plan 1 en suivant `docs/superpowers/plans/2026-05-26-plan-1-foundation.md`"*
+Commande : *"Continue le Plan 1 à partir de la Task 4 — `docs/superpowers/plans/2026-05-26-plan-1-foundation.md`"*
+
+## Notes importantes
+
+- Next.js **16.2.6** installé (pas 14) — plan compatible car utilise `await cookies()` (pattern 15+)
+- Supabase projet : **"suivi client mobile et fixe"** (pas "atexia-crm")
+- RLS activé automatiquement via event trigger sur ce projet Supabase
+- Commits : `e69f0d4` → `0e0948c` → `1f13043` → `2f26fb3`
 
 ## Plans prévus
 
