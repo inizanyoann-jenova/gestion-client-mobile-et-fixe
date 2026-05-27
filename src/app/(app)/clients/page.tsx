@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { ClientCard } from '@/components/clients/client-card'
 import { ClientsFilters } from '@/components/clients/clients-filters'
+import { ClientForm } from '@/components/clients/client-form'
 import type { Client } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -57,7 +58,7 @@ export default async function ClientsPage({ searchParams }: PageProps) {
             <span className="ml-2 text-slate-400 text-base font-normal">({count})</span>
           )}
         </h1>
-        <div id="new-client-btn" />
+        <ClientForm mode="create" />
       </div>
 
       <ClientsFilters search={search} statut={statut} secteur={secteur} />
