@@ -352,6 +352,30 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          id: string
+          endpoint: string
+          p256dh: string
+          auth_key: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          endpoint: string
+          p256dh: string
+          auth_key: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          endpoint?: string
+          p256dh?: string
+          auth_key?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -409,3 +433,5 @@ export type Interaction = Omit<Database['public']['Tables']['interactions']['Row
 }
 
 export type ModuleConfig = Database['public']['Tables']['modules_config']['Row']
+
+export type PushSubscriptionRow = Database['public']['Tables']['push_subscriptions']['Row']
