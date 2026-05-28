@@ -30,7 +30,7 @@ export function rappelEmailHtml({
     <p style="margin:0 0 8px;font-size:13px;color:#94a3b8;">📅 Échéance : ${escapeHtml(dateEcheance)}</p>
     ${contexte ? `<p style="margin:0 0 8px;font-size:13px;color:#64748b;">${escapeHtml(contexte)}</p>` : ''}
     <div style="margin-top:24px;padding-top:20px;border-top:1px solid #334155;">
-      <a href="${appUrl}/taches" style="display:inline-block;background:#0ea5e9;color:white;font-size:14px;font-weight:600;padding:10px 20px;border-radius:8px;text-decoration:none;">Ouvrir les tâches →</a>
+      <a href="${escapeHtml(appUrl)}/taches" style="display:inline-block;background:#0ea5e9;color:white;font-size:14px;font-weight:600;padding:10px 20px;border-radius:8px;text-decoration:none;">Ouvrir les tâches →</a>
     </div>
   </div>
 </body>

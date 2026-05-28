@@ -44,9 +44,13 @@ export async function POST(request: NextRequest) {
   const clientNom = (tache.client as { nom: string } | null)?.nom ?? null
   const projetTitre = (tache.projet as { titre: string } | null)?.titre ?? null
 
+  if (!user.email) {
+    return NextResponse.json({ error: 'Email utilisateur manquant' }, { status: 400 })
+  }
+
   const { error: emailError } = await resend.emails.send({
     from: 'ATEXIA CRM <notifications@atexia.re>',
-    to: user.email!,
+    to: user.email,
     subject: parsed.data.isToday
       ? `⏰ Tâche aujourd'hui : ${tache.titre}`
       : `🔔 Rappel demain : ${tache.titre}`,
