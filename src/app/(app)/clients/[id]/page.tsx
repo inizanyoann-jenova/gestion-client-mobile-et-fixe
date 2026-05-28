@@ -6,7 +6,9 @@ import { ClientKpis } from '@/components/clients/client-kpis'
 import { ContactsSection } from '@/components/clients/contacts-section'
 import { ClientNotes } from '@/components/clients/client-notes'
 import { ClientTabs } from '@/components/clients/client-tabs'
-import type { Client, Contact, Interaction, Tache } from '@/lib/supabase/types'
+import type { Client, Contact, Interaction, Projet, Tache } from '@/lib/supabase/types'
+
+type ProjetAvecClient = Projet & { client: { id: string; nom: string } }
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -20,6 +22,7 @@ export default async function ClientDetailPage({ params }: PageProps) {
     clientResult,
     contactsResult,
     projetsResult,
+    projetsTabsResult,
     lastEchangeResult,
     nextRappelResult,
   ] = await Promise.all([
@@ -33,6 +36,11 @@ export default async function ClientDetailPage({ params }: PageProps) {
       .from('projets')
       .select('statut, montant_devis, montant_facture')
       .eq('client_id', id),
+    supabase
+      .from('projets')
+      .select('*, client:clients(id, nom)')
+      .eq('client_id', id)
+      .order('created_at', { ascending: false }),
     supabase
       .from('interactions')
       .select('*')
@@ -55,6 +63,7 @@ export default async function ClientDetailPage({ params }: PageProps) {
   const client = clientResult.data as Client
   const contacts = (contactsResult.data ?? []) as Contact[]
   const projets = projetsResult.data ?? []
+  const projetsTabs = (projetsTabsResult.data ?? []) as unknown as ProjetAvecClient[]
 
   const kpis = {
     ca_realise: projets
@@ -85,6 +94,7 @@ export default async function ClientDetailPage({ params }: PageProps) {
           clientId={client.id}
           dernierEchange={(lastEchangeResult.data ?? null) as Interaction | null}
           prochainRappel={(nextRappelResult.data ?? null) as Tache | null}
+          projets={projetsTabs}
         />
       </div>
     </div>

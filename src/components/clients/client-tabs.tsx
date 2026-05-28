@@ -1,12 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import type { Interaction, Tache } from '@/lib/supabase/types'
+import Link from 'next/link'
+import { ProjetForm } from '@/components/projets/projet-form'
+import type { Interaction, Projet, Tache } from '@/lib/supabase/types'
+
+type ProjetAvecClient = Projet & { client: { id: string; nom: string } }
 
 interface ClientTabsProps {
   clientId: string
   dernierEchange: Interaction | null
   prochainRappel: Tache | null
+  projets?: ProjetAvecClient[]
 }
 
 const TABS = [
@@ -24,7 +29,7 @@ const TYPE_LABEL: Record<string, string> = {
   autre: 'Autre',
 }
 
-export function ClientTabs({ dernierEchange, prochainRappel }: ClientTabsProps) {
+export function ClientTabs({ clientId, dernierEchange, prochainRappel, projets }: ClientTabsProps) {
   const [activeTab, setActiveTab] = useState('activite')
 
   return (
@@ -88,7 +93,45 @@ export function ClientTabs({ dernierEchange, prochainRappel }: ClientTabsProps) 
           </>
         )}
 
-        {activeTab !== 'activite' && (
+        {activeTab === 'projets' && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <ProjetForm mode="create" clientId={clientId} />
+            </div>
+            {(!projets || projets.length === 0) && (
+              <p className="text-slate-400 text-sm text-center py-4">Aucun projet pour ce client</p>
+            )}
+            {projets && projets.map((projet) => (
+              <Link
+                key={projet.id}
+                href={`/projets/${projet.id}`}
+                className="block bg-slate-800 rounded-xl p-3 active:bg-slate-700 transition-colors"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-white text-sm font-medium truncate">{projet.titre}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
+                    projet.statut === 'termine' ? 'bg-emerald-500/20 text-emerald-400' :
+                    projet.statut === 'en_cours' ? 'bg-amber-500/20 text-amber-400' :
+                    projet.statut === 'sav' ? 'bg-red-500/20 text-red-400' :
+                    'bg-sky-500/20 text-sky-400'
+                  }`}>
+                    {projet.statut === 'en_etude' ? 'En étude' :
+                     projet.statut === 'en_cours' ? 'En cours' :
+                     projet.statut === 'termine' ? 'Terminé' : 'SAV'}
+                  </span>
+                </div>
+                <div className="mt-2 h-1 bg-slate-700 rounded-full">
+                  <div
+                    className="h-full bg-sky-500 rounded-full"
+                    style={{ width: `${projet.avancement}%` }}
+                  />
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {activeTab !== 'activite' && activeTab !== 'projets' && (
           <p className="text-slate-400 text-sm text-center py-6">
             Module disponible dans une prochaine version
           </p>

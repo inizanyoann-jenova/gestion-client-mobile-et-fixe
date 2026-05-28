@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface TacheFormProps {
-  projetId: string
+  projetId?: string
   clientId?: string
 }
 
@@ -39,7 +39,10 @@ export function TacheForm({ projetId, clientId }: TacheFormProps) {
     }
 
     try {
-      const res = await fetch(`/api/projets/${projetId}/taches`, {
+      const url = projetId
+        ? `/api/projets/${projetId}/taches`
+        : '/api/taches'
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
