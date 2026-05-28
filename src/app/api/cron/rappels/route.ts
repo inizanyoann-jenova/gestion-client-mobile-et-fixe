@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { Resend } from 'resend'
 import { rappelEmailHtml } from '@/lib/email/rappel-template'
 
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 
-  const supabase = await createClient()
+  const supabase = createServiceClient()
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -38,11 +38,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  const { data: { user } } = await supabase.auth.getUser()
-  const toEmail = user?.email ?? process.env.NOTIF_EMAIL
-
+  const toEmail = process.env.NOTIF_EMAIL
   if (!toEmail) {
-    return NextResponse.json({ error: 'Aucun email destinataire' }, { status: 500 })
+    return NextResponse.json({ error: 'NOTIF_EMAIL manquant' }, { status: 500 })
   }
 
   let sent = 0
