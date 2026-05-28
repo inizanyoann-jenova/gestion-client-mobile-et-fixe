@@ -60,6 +60,7 @@ export default async function ProjetDetailPage({ params }: PageProps) {
           taches={taches}
           interactions={interactions}
           documents={documents}
+          initialNotes={projet.notes ?? ''}
         />
       </div>
     </div>
