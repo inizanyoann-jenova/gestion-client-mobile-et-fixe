@@ -13,6 +13,7 @@ export function TacheForm({ projetId, clientId }: TacheFormProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [isPending, setIsPending] = useState(false)
+  const [notifActive, setNotifActive] = useState(false)
 
   const open = () => {
     setError(null)
@@ -36,12 +37,11 @@ export function TacheForm({ projetId, clientId }: TacheFormProps) {
       notification_email: fd.get('notification_email') === 'on',
       notification_push: fd.get('notification_push') === 'on',
       client_id: clientId ?? null,
+      projet_id: projetId ?? null,
     }
 
     try {
-      const url = projetId
-        ? `/api/projets/${projetId}/taches`
-        : '/api/taches'
+      const url = projetId ? `/api/projets/${projetId}/taches` : '/api/taches'
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,7 +50,7 @@ export function TacheForm({ projetId, clientId }: TacheFormProps) {
 
       if (!res.ok) {
         const json = await res.json().catch(() => ({}))
-        setError(json.error?.message ?? json.error ?? 'Erreur')
+        setError((json as { error?: string }).error ?? 'Erreur')
         return
       }
 
@@ -72,7 +72,9 @@ export function TacheForm({ projetId, clientId }: TacheFormProps) {
       <dialog
         ref={dialogRef}
         className="w-full max-w-md rounded-2xl bg-slate-800 text-white m-auto"
-        onClick={(e) => { if (e.target === dialogRef.current) close() }}
+        onClick={(e) => {
+          if (e.target === dialogRef.current) close()
+        }}
       >
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <h2 className="text-lg font-bold">Nouvelle tâche</h2>
@@ -120,28 +122,49 @@ export function TacheForm({ projetId, clientId }: TacheFormProps) {
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm text-slate-400">Notifications (câblage Plan 4)</p>
             <label className="flex items-center gap-2 text-sm text-slate-300">
-              <input type="checkbox" name="notification_active" className="accent-sky-500" />
-              Activer les notifications
+              <input
+                type="checkbox"
+                name="notification_active"
+                className="accent-sky-500"
+                onChange={(e) => setNotifActive(e.target.checked)}
+              />
+              Activer les rappels
             </label>
-            <label className="flex items-center gap-2 text-sm text-slate-300">
-              <input type="checkbox" name="notification_email" className="accent-sky-500" />
-              Email
-            </label>
-            <label className="flex items-center gap-2 text-sm text-slate-300">
-              <input type="checkbox" name="notification_push" className="accent-sky-500" />
-              Push
-            </label>
+
+            {notifActive && (
+              <div className="ml-6 space-y-1.5">
+                <label className="flex items-center gap-2 text-sm text-slate-400">
+                  <input type="checkbox" name="notification_email" className="accent-sky-500" />
+                  Email (J-1 et J0)
+                </label>
+                <label className="flex items-center gap-2 text-sm text-slate-400">
+                  <input type="checkbox" name="notification_push" className="accent-sky-500" />
+                  Notification push
+                </label>
+              </div>
+            )}
           </div>
 
-          {error && <p className="text-red-400 text-sm" role="alert">{error}</p>}
+          {error && (
+            <p className="text-red-400 text-sm" role="alert">
+              {error}
+            </p>
+          )}
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={close} className="flex-1 py-2.5 rounded-lg bg-slate-700 text-slate-300 text-sm font-medium">
+            <button
+              type="button"
+              onClick={close}
+              className="flex-1 py-2.5 rounded-lg bg-slate-700 text-slate-300 text-sm font-medium"
+            >
               Annuler
             </button>
-            <button type="submit" disabled={isPending} className="flex-1 py-2.5 rounded-lg bg-sky-500 text-white text-sm font-semibold disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={isPending}
+              className="flex-1 py-2.5 rounded-lg bg-sky-500 text-white text-sm font-semibold disabled:opacity-50"
+            >
               {isPending ? 'Création…' : 'Créer'}
             </button>
           </div>
