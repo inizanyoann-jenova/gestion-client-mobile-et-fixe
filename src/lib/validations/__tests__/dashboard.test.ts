@@ -48,12 +48,61 @@ describe('TacheLiteSchema', () => {
   })
 })
 
+describe('ProjetLiteSchema', () => {
+  it('valide un projet avec tous les champs', () => {
+    const result = ProjetLiteSchema.safeParse({
+      id: '550e8400-e29b-41d4-a716-446655440001',
+      titre: 'Installation TGBT',
+      statut: 'en_cours',
+      avancement: 45,
+      updated_at: '2026-05-29T10:00:00.000Z',
+      client: { id: 'c1', nom: 'Carrefour Grand Nord' },
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejette un projet sans client (requis)', () => {
+    const result = ProjetLiteSchema.safeParse({
+      id: '550e8400-e29b-41d4-a716-446655440001',
+      titre: 'Installation TGBT',
+      statut: 'en_cours',
+      avancement: 45,
+      updated_at: '2026-05-29T10:00:00.000Z',
+      client: null,
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
 describe('DashboardResponseSchema', () => {
   it('valide une réponse complète', () => {
     const result = DashboardResponseSchema.safeParse({
       kpis: { clients_actifs: 3, projets_en_cours: 2, taches_urgentes: 1, documents_devis: 5 },
       taches_du_jour: [],
       projets_recents: [],
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('valide une réponse avec tâches et projets réels', () => {
+    const result = DashboardResponseSchema.safeParse({
+      kpis: { clients_actifs: 3, projets_en_cours: 2, taches_urgentes: 1, documents_devis: 5 },
+      taches_du_jour: [{
+        id: '550e8400-e29b-41d4-a716-446655440001',
+        titre: 'Vérifier chantier',
+        priorite: 'haute',
+        date_echeance: '2026-05-29T08:00:00.000Z',
+        client: { id: 'c1', nom: 'ACME' },
+        projet: null,
+      }],
+      projets_recents: [{
+        id: '550e8400-e29b-41d4-a716-446655440002',
+        titre: 'Câblage réseau',
+        statut: 'en_cours',
+        avancement: 60,
+        updated_at: '2026-05-29T10:00:00.000Z',
+        client: { id: 'c1', nom: 'ACME' },
+      }],
     })
     expect(result.success).toBe(true)
   })
