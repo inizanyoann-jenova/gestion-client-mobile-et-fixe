@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { TypeInteraction } from '@/lib/supabase/types'
+import { toDatetimeLocal } from '@/lib/utils/date'
 
 interface EchangeFormProps {
   projetId?: string
@@ -17,12 +18,6 @@ const TYPE_OPTIONS: { value: TypeInteraction; label: string }[] = [
   { value: 'autre', label: 'Autre' },
 ]
 
-function toDatetimeLocal(isoString: string): string {
-  const d = new Date(isoString)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
 export function EchangeForm({ projetId, clientId }: EchangeFormProps) {
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -31,6 +26,7 @@ export function EchangeForm({ projetId, clientId }: EchangeFormProps) {
   const [isPending, setIsPending] = useState(false)
 
   const open = () => {
+    setType('appel')
     setError(null)
     dialogRef.current?.showModal()
   }

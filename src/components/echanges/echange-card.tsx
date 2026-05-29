@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { Interaction, TypeInteraction } from '@/lib/supabase/types'
+import { toDatetimeLocal } from '@/lib/utils/date'
 
 type InteractionAvecContext = Interaction & {
   client: { id: string; nom: string } | null
@@ -50,7 +51,10 @@ export function EchangeCard({ interaction }: EchangeCardProps) {
     if (!confirm('Supprimer cet échange ?')) return
     setIsDeleting(true)
     try {
-      await fetch(`/api/interactions/${interaction.id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/interactions/${interaction.id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        return
+      }
       router.refresh()
     } catch {
       // ignore
@@ -138,12 +142,6 @@ interface EchangeEditContentProps {
   interaction: Interaction
   onClose: () => void
   onSuccess: () => void
-}
-
-function toDatetimeLocal(isoString: string): string {
-  const d = new Date(isoString)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
 function EchangeEditContent({ interaction, onClose, onSuccess }: EchangeEditContentProps) {
