@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { Resend } from 'resend'
 import { rappelEmailHtml } from '@/lib/email/rappel-template'
+import { relanceFactureEmailHtml } from '@/lib/email/relance-facture-template'
 import { sendPushNotification } from '@/lib/notifications/push'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -93,10 +94,65 @@ export async function GET(request: NextRequest) {
     await supabase.from('push_subscriptions').delete().in('endpoint', expiredEndpoints)
   }
 
+  // ─── Finance : mise à jour des statuts et relances ───────────────────────
+
+  const todayStr = today.toISOString().slice(0, 10)
+
+  // 1. Passer en_retard les factures émises dont l'échéance est dépassée
+  await supabase
+    .from('factures')
+    .update({ statut: 'en_retard', updated_at: new Date().toISOString() })
+    .eq('statut', 'émise')
+    .lt('date_echeance', todayStr)
+
+  // 2. Passer expiré les devis envoyés dont la date_validite est dépassée
+  await supabase
+    .from('devis')
+    .update({ statut: 'expiré', updated_at: new Date().toISOString() })
+    .eq('statut', 'envoyé')
+    .lt('date_validite', todayStr)
+
+  // 3. Relances factures en retard (J+7 et J+30)
+  const j7 = new Date(today)
+  j7.setDate(j7.getDate() - 7)
+  const j30 = new Date(today)
+  j30.setDate(j30.getDate() - 30)
+
+  const j7Str = j7.toISOString().slice(0, 10)
+  const j30Str = j30.toISOString().slice(0, 10)
+
+  const { data: facturesRelance } = await supabase
+    .from('factures')
+    .select('*, client:clients(nom)')
+    .eq('statut', 'en_retard')
+    .in('date_echeance', [j7Str, j30Str])
+
+  let relancesSent = 0
+
+  for (const facture of facturesRelance ?? []) {
+    if (!toEmail) continue
+    const joursRetard = facture.date_echeance === j7Str ? 7 : 30
+    const clientNom = (facture.client as unknown as { nom: string } | null)?.nom ?? 'Client'
+    const { error: relanceError } = await resend.emails.send({
+      from: 'ATEXIA CRM <notifications@atexia.re>',
+      to: toEmail,
+      subject: `${joursRetard === 30 ? '🚨 Relance ferme' : '⚠️ Relance'} — Facture ${facture.numero}`,
+      html: relanceFactureEmailHtml({
+        numeroFacture: facture.numero,
+        montantTtc: Number(facture.montant_ttc),
+        dateEcheance: facture.date_echeance,
+        clientNom,
+        joursRetard,
+      }),
+    })
+    if (!relanceError) relancesSent++
+  }
+
   return NextResponse.json({
     processed: (taches ?? []).length,
     emailSent,
     pushSent,
     expiredCleaned: expiredEndpoints.length,
+    relancesSent,
   })
 }
