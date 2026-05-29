@@ -46,7 +46,7 @@ export default async function FactureDetailPage({ params }: { params: Promise<{ 
         </div>
         <p className="text-white font-semibold">{facture.client.nom}</p>
         {facture.projet && <p className="text-slate-400 text-sm">{facture.projet.titre}</p>}
-        {facture.devis_numero && <p className="text-slate-500 text-xs">Réf. devis : {facture.devis_numero}</p>}
+        {facture.devis?.numero && <p className="text-slate-500 text-xs">Réf. devis : {facture.devis.numero}</p>}
         <div className="flex gap-4 mt-2">
           <p className="text-slate-500 text-xs">Émis le {facture.date_emission}</p>
           <p className="text-slate-500 text-xs">Échéance : {facture.date_echeance}</p>
@@ -78,7 +78,7 @@ export default async function FactureDetailPage({ params }: { params: Promise<{ 
         <a href={`/api/factures/${id}/pdf`} className="flex items-center gap-2 text-sm bg-slate-700 text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-600 transition-colors font-medium">
           📥 Télécharger PDF
         </a>
-        <EnvoyerFactureButton factureId={id} />
+        {facture.statut === 'émise' && <EnvoyerFactureButton factureId={id} />}
         {facture.statut !== 'payée' && <MarquerPayeeButton factureId={id} />}
       </div>
     </div>
