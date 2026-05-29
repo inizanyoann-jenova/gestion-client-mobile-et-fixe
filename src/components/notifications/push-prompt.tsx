@@ -35,36 +35,36 @@ export function PushPrompt() {
   }, [])
 
   const getActiveRegistration = async (): Promise<ServiceWorkerRegistration> => {
-    const reg = await navigator.serviceWorker.getRegistration('/')
-
-    // Chemin rapide : SW déjà actif
-    if (reg?.active) return reg
-
-    // SW en cours d'installation ou en attente — on écoute le changement d'état
-    const sw = reg?.installing ?? reg?.waiting
-    if (sw) {
-      return new Promise((resolve, reject) => {
-        const timer = setTimeout(
-          () => reject(new Error('Le service worker met trop de temps à démarrer. Rechargez la page.')),
-          15000
-        )
-        sw.addEventListener('statechange', () => {
-          if (sw.state === 'activated') { clearTimeout(timer); resolve(reg!) }
-          if (sw.state === 'redundant') { clearTimeout(timer); reject(new Error("Échec d'installation du service worker. Rechargez la page.")) }
-        })
-      })
+    // Enregistrement explicite — retourne la registration existante ou en crée une
+    let reg: ServiceWorkerRegistration
+    try {
+      reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    } catch (err) {
+      throw new Error(
+        `Impossible d'enregistrer le service worker : ${err instanceof Error ? err.message : String(err)}`
+      )
     }
 
-    // Aucun SW enregistré — attente courte
-    return Promise.race([
-      navigator.serviceWorker.ready,
-      new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error('Service worker non disponible. Rechargez la page et réessayez.')),
-          10000
-        )
-      ),
-    ])
+    if (reg.active) return reg
+
+    const sw = reg.installing ?? reg.waiting
+    if (!sw) {
+      throw new Error('Service worker enregistré mais aucun worker en cours. Rechargez la page.')
+    }
+
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error('Le service worker met trop de temps à s\'activer. Vérifiez votre connexion.')),
+        60000
+      )
+      sw.addEventListener('statechange', () => {
+        if (sw.state === 'activated') { clearTimeout(timer); resolve(reg) }
+        if (sw.state === 'redundant') {
+          clearTimeout(timer)
+          reject(new Error('Échec d\'installation du service worker (erreur réseau probable). Rechargez la page.'))
+        }
+      })
+    })
   }
 
   const subscribe = async () => {
