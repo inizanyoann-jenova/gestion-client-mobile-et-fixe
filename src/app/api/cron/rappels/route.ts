@@ -99,18 +99,20 @@ export async function GET(request: NextRequest) {
   const todayStr = today.toISOString().slice(0, 10)
 
   // 1. Passer en_retard les factures émises dont l'échéance est dépassée
-  await supabase
+  const { error: statusErr } = await supabase
     .from('factures')
     .update({ statut: 'en_retard', updated_at: new Date().toISOString() })
     .eq('statut', 'émise')
     .lt('date_echeance', todayStr)
+  if (statusErr) console.error('[cron/rappels] factures status update:', statusErr.message)
 
   // 2. Passer expiré les devis envoyés dont la date_validite est dépassée
-  await supabase
+  const { error: devisStatusErr } = await supabase
     .from('devis')
     .update({ statut: 'expiré', updated_at: new Date().toISOString() })
     .eq('statut', 'envoyé')
     .lt('date_validite', todayStr)
+  if (devisStatusErr) console.error('[cron/rappels] devis status update:', devisStatusErr.message)
 
   // 3. Relances factures en retard (J+7 et J+30)
   const j7 = new Date(today)
