@@ -15,9 +15,16 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      const targetUrl = event.notification.data.url
       for (const client of clientList) {
-        if (client.url === event.notification.data.url && 'focus' in client) {
-          return client.focus()
+        try {
+          const clientPath = new URL(client.url).pathname
+          const targetPath = new URL(targetUrl, self.location.origin).pathname
+          if (clientPath === targetPath && 'focus' in client) {
+            return client.focus()
+          }
+        } catch {
+          // URL parsing failed, skip
         }
       }
       return clients.openWindow(event.notification.data.url)
