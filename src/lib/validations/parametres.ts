@@ -29,3 +29,22 @@ export const EntrepriseSchema = z.object({
 
 export type EntrepriseData = z.infer<typeof EntrepriseSchema>
 export type ParametresCle = z.infer<typeof ParametresClesSchema>
+
+export const FINANCE_CLES = [
+  'rib_iban',
+  'rib_bic',
+  'rib_banque',
+  'devis_validite_jours',
+  'facture_echeance_jours',
+  'facture_mentions',
+] as const
+
+export const RIB_CLES = ['rib_iban', 'rib_bic', 'rib_banque'] as const
+
+export const RibSchema = z.object({
+  rib_iban: z.string().max(50).optional(),
+  rib_bic: z.string().max(20).optional(),
+  rib_banque: z.string().max(100).optional(),
+})
+
+export type RibData = z.infer<typeof RibSchema>
