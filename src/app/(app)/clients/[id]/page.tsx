@@ -6,21 +6,9 @@ import { ClientKpis } from '@/components/clients/client-kpis'
 import { ContactsSection } from '@/components/clients/contacts-section'
 import { ClientNotes } from '@/components/clients/client-notes'
 import { ClientTabs } from '@/components/clients/client-tabs'
-import type { Client, Contact, Document, Interaction, Projet, Tache } from '@/lib/supabase/types'
+import type { Client, Contact, Interaction, Projet, Tache } from '@/lib/supabase/types'
 
 type ProjetAvecClient = Projet & { client: { id: string; nom: string } }
-type DocumentAvecContext = Document & {
-  client: { id: string; nom: string } | null
-  projet: { id: string; titre: string } | null
-}
-type TacheAvecRelations = Tache & {
-  client: { id: string; nom: string } | null
-  projet: { id: string; titre: string } | null
-}
-type InteractionAvecContext = Interaction & {
-  client: { id: string; nom: string } | null
-  projet: { id: string; titre: string } | null
-}
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -37,9 +25,6 @@ export default async function ClientDetailPage({ params }: PageProps) {
     projetsTabsResult,
     lastEchangeResult,
     nextRappelResult,
-    interactionsResult,
-    documentsResult,
-    tachesResult,
   ] = await Promise.all([
     supabase.from('clients').select('*').eq('id', id).single(),
     supabase.from('contacts').select('*').eq('client_id', id).order('est_principal', { ascending: false }),
@@ -47,9 +32,6 @@ export default async function ClientDetailPage({ params }: PageProps) {
     supabase.from('projets').select('*, client:clients(id, nom)').eq('client_id', id).order('created_at', { ascending: false }),
     supabase.from('interactions').select('*').eq('client_id', id).order('date', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('taches').select('*').eq('client_id', id).eq('statut', 'a_faire').order('date_echeance').limit(1).maybeSingle(),
-    supabase.from('interactions').select('*, client:clients(id, nom), projet:projets(id, titre)').eq('client_id', id).order('date', { ascending: false }).limit(20),
-    supabase.from('documents').select('*, client:clients(id, nom), projet:projets(id, titre)').eq('client_id', id).order('created_at', { ascending: false }).limit(20),
-    supabase.from('taches').select('*, client:clients(id, nom), projet:projets(id, titre)').eq('client_id', id).order('date_echeance', { ascending: true, nullsFirst: false }).limit(20),
   ])
 
   if (clientResult.error || !clientResult.data) notFound()
@@ -85,9 +67,6 @@ export default async function ClientDetailPage({ params }: PageProps) {
           dernierEchange={(lastEchangeResult.data ?? null) as Interaction | null}
           prochainRappel={(nextRappelResult.data ?? null) as Tache | null}
           projets={projetsTabs}
-          interactions={(interactionsResult.data ?? []) as unknown as InteractionAvecContext[]}
-          documents={(documentsResult.data ?? []) as unknown as DocumentAvecContext[]}
-          taches={(tachesResult.data ?? []) as unknown as TacheAvecRelations[]}
         />
       </div>
     </div>

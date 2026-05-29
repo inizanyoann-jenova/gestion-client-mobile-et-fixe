@@ -3,32 +3,17 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ProjetForm } from '@/components/projets/projet-form'
-import { TacheForm } from '@/components/taches/tache-form'
-import { EchangeForm } from '@/components/echanges/echange-form'
-import type { Document, Interaction, Projet, Tache, TypeInteraction } from '@/lib/supabase/types'
+import type { Interaction, Projet, Tache, TypeInteraction } from '@/lib/supabase/types'
+import { ClientEchanges } from './client-echanges'
+import { ClientDocuments } from './client-documents'
 
 type ProjetAvecClient = Projet & { client: { id: string; nom: string } }
-type DocumentAvecContext = Document & {
-  client: { id: string; nom: string } | null
-  projet: { id: string; titre: string } | null
-}
-type TacheAvecRelations = Tache & {
-  client: { id: string; nom: string } | null
-  projet: { id: string; titre: string } | null
-}
-type InteractionAvecContext = Interaction & {
-  client: { id: string; nom: string } | null
-  projet: { id: string; titre: string } | null
-}
 
 interface ClientTabsProps {
   clientId: string
   dernierEchange: Interaction | null
   prochainRappel: Tache | null
   projets?: ProjetAvecClient[]
-  interactions?: InteractionAvecContext[]
-  documents?: DocumentAvecContext[]
-  taches?: TacheAvecRelations[]
 }
 
 const TABS = [
@@ -43,26 +28,7 @@ const TYPE_LABEL: Record<TypeInteraction, string> = {
   appel: 'Appel', email: 'Email', visite: 'Visite', reunion: 'Réunion', autre: 'Autre',
 }
 
-const TYPE_COLOR: Record<TypeInteraction, string> = {
-  appel: 'bg-sky-500/20 text-sky-400',
-  email: 'bg-violet-500/20 text-violet-400',
-  visite: 'bg-emerald-500/20 text-emerald-400',
-  reunion: 'bg-amber-500/20 text-amber-400',
-  autre: 'bg-slate-500/20 text-slate-400',
-}
-
-const TYPE_ICON: Record<string, string> = {
-  devis: '📄', rapport: '📋', plan: '📐', photo: '📷', contrat: '📝', autre: '📎',
-}
-
-function formatSize(bytes: number | null): string {
-  if (!bytes) return '—'
-  if (bytes < 1024) return `${bytes} o`
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} Ko`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`
-}
-
-export function ClientTabs({ clientId, dernierEchange, prochainRappel, projets, interactions, documents, taches }: ClientTabsProps) {
+export function ClientTabs({ clientId, dernierEchange, prochainRappel, projets }: ClientTabsProps) {
   const [activeTab, setActiveTab] = useState('activite')
 
   return (
@@ -149,90 +115,17 @@ export function ClientTabs({ clientId, dernierEchange, prochainRappel, projets, 
         )}
 
         {activeTab === 'echanges' && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs">{interactions?.length ?? 0} échange{(interactions?.length ?? 0) !== 1 ? 's' : ''}</span>
-              <EchangeForm clientId={clientId} />
-            </div>
-            {(!interactions || interactions.length === 0) && (
-              <p className="text-slate-400 text-sm text-center py-4">Aucun échange pour ce client</p>
-            )}
-            {interactions?.map((interaction) => (
-              <div key={interaction.id} className="bg-slate-800 rounded-xl p-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${TYPE_COLOR[interaction.type]}`}>
-                    {TYPE_LABEL[interaction.type]}
-                  </span>
-                  <span className="text-slate-500 text-xs ml-auto">
-                    {new Date(interaction.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </span>
-                </div>
-                <p className="text-white text-sm line-clamp-2">{interaction.resume}</p>
-                {interaction.suite_a_donner && (
-                  <p className="text-amber-400 text-xs mt-2">→ {interaction.suite_a_donner}</p>
-                )}
-              </div>
-            ))}
-          </div>
+          <ClientEchanges clientId={clientId} />
         )}
 
         {activeTab === 'documents' && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs">{documents?.length ?? 0} fichier{(documents?.length ?? 0) !== 1 ? 's' : ''}</span>
-              <Link href="/documents" className="text-sky-400 text-xs font-medium">Voir tous</Link>
-            </div>
-            {(!documents || documents.length === 0) && (
-              <p className="text-slate-400 text-sm text-center py-4">Aucun document pour ce client</p>
-            )}
-            {documents?.map((doc) => (
-              <div key={doc.id} className="bg-slate-800 rounded-xl p-3 flex items-center gap-3">
-                <span className="text-xl shrink-0">{TYPE_ICON[doc.type] ?? '📎'}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">{doc.nom}</p>
-                  <p className="text-slate-500 text-xs">{formatSize(doc.taille_octets)}</p>
-                </div>
-                {doc.projet && (
-                  <Link href={`/projets/${doc.projet.id}`} className="text-slate-400 text-xs hover:text-sky-400 shrink-0 truncate max-w-[100px]">
-                    {doc.projet.titre}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
+          <ClientDocuments clientId={clientId} />
         )}
 
         {activeTab === 'taches' && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs">{taches?.filter(t => t.statut === 'a_faire').length ?? 0} à faire</span>
-              <TacheForm clientId={clientId} />
-            </div>
-            {(!taches || taches.length === 0) && (
-              <p className="text-slate-400 text-sm text-center py-4">Aucune tâche pour ce client</p>
-            )}
-            {taches?.map((tache) => (
-              <div key={tache.id} className={`bg-slate-800 rounded-xl p-3 flex items-center gap-3${tache.statut === 'fait' ? ' opacity-50' : ''}`}>
-                <div className={`w-2 h-2 rounded-full shrink-0 ${
-                  tache.priorite === 'haute' ? 'bg-red-400' :
-                  tache.priorite === 'normale' ? 'bg-amber-400' : 'bg-slate-400'
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">{tache.titre}</p>
-                  {tache.date_echeance && (
-                    <p className="text-slate-400 text-xs">
-                      {new Date(tache.date_echeance).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                    </p>
-                  )}
-                </div>
-                {tache.projet && (
-                  <Link href={`/projets/${tache.projet.id}`} className="text-slate-400 text-xs hover:text-sky-400 shrink-0 truncate max-w-[100px]">
-                    {tache.projet.titre}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
+          <p className="text-slate-400 text-sm text-center py-6">
+            Voir l&apos;onglet Tâches global
+          </p>
         )}
       </div>
     </div>
