@@ -197,6 +197,24 @@ export type Database = {
           },
         ]
       }
+      app_settings: {
+        Row: {
+          cle: string
+          valeur: string | null
+          updated_at: string
+        }
+        Insert: {
+          cle: string
+          valeur?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cle?: string
+          valeur?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       modules_config: {
         Row: {
           cle: string
@@ -435,3 +453,5 @@ export type Interaction = Omit<Database['public']['Tables']['interactions']['Row
 export type ModuleConfig = Database['public']['Tables']['modules_config']['Row']
 
 export type PushSubscriptionRow = Database['public']['Tables']['push_subscriptions']['Row']
+
+export type AppSetting = Database['public']['Tables']['app_settings']['Row']
