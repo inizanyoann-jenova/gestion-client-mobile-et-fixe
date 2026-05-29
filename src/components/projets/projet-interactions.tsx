@@ -1,3 +1,4 @@
+import { EchangeForm } from '@/components/echanges/echange-form'
 import type { Interaction, TypeInteraction } from '@/lib/supabase/types'
 
 interface ProjetInteractionsProps {
@@ -26,12 +27,7 @@ export function ProjetInteractions({ interactions, projetId }: ProjetInteraction
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-slate-400 text-xs">{interactions.length} échange{interactions.length !== 1 ? 's' : ''}</span>
-        <a
-          href={`/echanges/nouveau?projet=${projetId}`}
-          className="text-sky-400 text-sm font-medium"
-        >
-          + Nouvel échange
-        </a>
+        <EchangeForm projetId={projetId} />
       </div>
 
       {interactions.length === 0 && (

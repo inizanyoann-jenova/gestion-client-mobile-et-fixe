@@ -92,11 +92,12 @@ export function ProjetDocuments({ documents, projetId }: ProjetDocumentsProps) {
   const handleDownload = async (doc: Document) => {
     if (!doc.storage_path) return
     try {
-      const res = await fetch(`/api/projets/${projetId}/documents?path=${encodeURIComponent(doc.storage_path)}`)
-      const { url } = await res.json()
-      if (url) window.open(url, '_blank')
+      const res = await fetch(`/api/documents/${doc.id}`)
+      if (!res.ok) return
+      const json = await res.json()
+      if (json.signed_url) window.open(json.signed_url, '_blank')
     } catch {
-      // download will be wired in a future plan
+      // silently fail
     }
   }
 
