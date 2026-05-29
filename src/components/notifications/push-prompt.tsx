@@ -34,6 +34,39 @@ export function PushPrompt() {
       })
   }, [])
 
+  const getActiveRegistration = async (): Promise<ServiceWorkerRegistration> => {
+    const reg = await navigator.serviceWorker.getRegistration('/')
+
+    // Chemin rapide : SW déjà actif
+    if (reg?.active) return reg
+
+    // SW en cours d'installation ou en attente — on écoute le changement d'état
+    const sw = reg?.installing ?? reg?.waiting
+    if (sw) {
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(
+          () => reject(new Error('Le service worker met trop de temps à démarrer. Rechargez la page.')),
+          15000
+        )
+        sw.addEventListener('statechange', () => {
+          if (sw.state === 'activated') { clearTimeout(timer); resolve(reg) }
+          if (sw.state === 'redundant') { clearTimeout(timer); reject(new Error("Échec d'installation du service worker. Rechargez la page.")) }
+        })
+      })
+    }
+
+    // Aucun SW enregistré — attente courte
+    return Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error('Service worker non disponible. Rechargez la page et réessayez.')),
+          10000
+        )
+      ),
+    ])
+  }
+
   const subscribe = async () => {
     setIsSubscribing(true)
     setError(null)
@@ -42,7 +75,7 @@ export function PushPrompt() {
       setPermission(perm)
       if (perm !== 'granted') return
 
-      const registration = await navigator.serviceWorker.ready
+      const registration = await getActiveRegistration()
       const existing = await registration.pushManager.getSubscription()
       if (existing) await existing.unsubscribe()
 
@@ -101,11 +134,16 @@ export function PushPrompt() {
         disabled={isSubscribing || permission === 'denied'}
         className="px-4 py-2 bg-sky-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-sky-400 transition-colors"
       >
-        {isSubscribing ? 'Activation…' : 'Activer'}
+        {isSubscribing ? 'Activation en cours…' : 'Activer'}
       </button>
       {permission === 'denied' && (
         <p className="text-red-400 text-xs">
           Notifications bloquées dans le navigateur. Modifiez les paramètres du site.
+        </p>
+      )}
+      {isSubscribing && (
+        <p className="text-slate-400 text-xs">
+          Première activation : l&apos;app s&apos;installe en arrière-plan, cela peut prendre quelques secondes…
         </p>
       )}
       {error && <p className="text-red-400 text-xs">{error}</p>}
