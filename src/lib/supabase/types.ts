@@ -394,6 +394,222 @@ export type Database = {
         }
         Relationships: []
       }
+      prestations: {
+        Row: {
+          id: string
+          libelle: string
+          description: string | null
+          unite: string
+          prix_unitaire: number
+          taux_tva: number
+          actif: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          libelle: string
+          description?: string | null
+          unite?: string
+          prix_unitaire?: number
+          taux_tva?: number
+          actif?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          libelle?: string
+          description?: string | null
+          unite?: string
+          prix_unitaire?: number
+          taux_tva?: number
+          actif?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      devis: {
+        Row: {
+          id: string
+          numero: string
+          client_id: string
+          projet_id: string | null
+          statut: string
+          date_emission: string
+          date_validite: string
+          montant_ht: number
+          montant_tva: number
+          montant_ttc: number
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          numero: string
+          client_id: string
+          projet_id?: string | null
+          statut?: string
+          date_emission?: string
+          date_validite: string
+          montant_ht?: number
+          montant_tva?: number
+          montant_ttc?: number
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          numero?: string
+          client_id?: string
+          projet_id?: string | null
+          statut?: string
+          date_emission?: string
+          date_validite?: string
+          montant_ht?: number
+          montant_tva?: number
+          montant_ttc?: number
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      devis_lignes: {
+        Row: {
+          id: string
+          devis_id: string
+          prestation_id: string | null
+          libelle: string
+          quantite: number
+          unite: string
+          prix_unitaire: number
+          taux_tva: number
+          total_ht: number
+          ordre: number
+        }
+        Insert: {
+          id?: string
+          devis_id: string
+          prestation_id?: string | null
+          libelle: string
+          quantite?: number
+          unite?: string
+          prix_unitaire: number
+          taux_tva?: number
+          total_ht: number
+          ordre?: number
+        }
+        Update: {
+          id?: string
+          devis_id?: string
+          prestation_id?: string | null
+          libelle?: string
+          quantite?: number
+          unite?: string
+          prix_unitaire?: number
+          taux_tva?: number
+          total_ht?: number
+          ordre?: number
+        }
+        Relationships: []
+      }
+      factures: {
+        Row: {
+          id: string
+          numero: string
+          devis_id: string | null
+          client_id: string
+          projet_id: string | null
+          type: string
+          statut: string
+          date_emission: string
+          date_echeance: string
+          pourcentage_acompte: number | null
+          montant_ht: number
+          montant_tva: number
+          montant_ttc: number
+          date_paiement: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          numero: string
+          devis_id?: string | null
+          client_id: string
+          projet_id?: string | null
+          type?: string
+          statut?: string
+          date_emission?: string
+          date_echeance: string
+          pourcentage_acompte?: number | null
+          montant_ht?: number
+          montant_tva?: number
+          montant_ttc?: number
+          date_paiement?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          numero?: string
+          devis_id?: string | null
+          client_id?: string
+          projet_id?: string | null
+          type?: string
+          statut?: string
+          date_emission?: string
+          date_echeance?: string
+          pourcentage_acompte?: number | null
+          montant_ht?: number
+          montant_tva?: number
+          montant_ttc?: number
+          date_paiement?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      factures_lignes: {
+        Row: {
+          id: string
+          facture_id: string
+          libelle: string
+          quantite: number
+          unite: string
+          prix_unitaire: number
+          taux_tva: number
+          total_ht: number
+          ordre: number
+        }
+        Insert: {
+          id?: string
+          facture_id: string
+          libelle: string
+          quantite?: number
+          unite?: string
+          prix_unitaire: number
+          taux_tva?: number
+          total_ht: number
+          ordre?: number
+        }
+        Update: {
+          id?: string
+          facture_id?: string
+          libelle?: string
+          quantite?: number
+          unite?: string
+          prix_unitaire?: number
+          taux_tva?: number
+          total_ht?: number
+          ordre?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
