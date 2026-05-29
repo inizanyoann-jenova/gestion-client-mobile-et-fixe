@@ -19,8 +19,8 @@ const TABS = [
   { id: 'taches', label: 'Tâches' },
   { id: 'documents', label: 'Documents' },
   { id: 'echanges', label: 'Échanges' },
-  { id: 'notes', label: 'Notes' },
   { id: 'finances', label: 'Finances' },
+  { id: 'notes', label: 'Notes' },
 ]
 
 export function ProjetTabs({ projetId, taches, interactions, documents, initialNotes }: ProjetTabsProps) {
@@ -59,7 +59,7 @@ export function ProjetTabs({ projetId, taches, interactions, documents, initialN
         )}
         {activeTab === 'finances' && (
           <div className="text-center py-6">
-            <a href="/finances" className="text-sky-400 text-sm hover:text-sky-300 transition-colors">
+            <a href="/finances?tab=devis" className="text-sky-400 text-sm hover:text-sky-300 transition-colors">
               Voir les devis et factures liés →
             </a>
           </div>

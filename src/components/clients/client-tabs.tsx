@@ -21,8 +21,8 @@ const TABS = [
   { id: 'projets', label: 'Projets' },
   { id: 'echanges', label: 'Échanges' },
   { id: 'documents', label: 'Documents' },
-  { id: 'taches', label: 'Tâches' },
   { id: 'finances', label: 'Finances' },
+  { id: 'taches', label: 'Tâches' },
 ]
 
 const TYPE_LABEL: Record<TypeInteraction, string> = {
@@ -131,7 +131,7 @@ export function ClientTabs({ clientId, dernierEchange, prochainRappel, projets }
 
         {activeTab === 'finances' && (
           <div className="text-center py-6">
-            <a href="/finances" className="text-sky-400 text-sm hover:text-sky-300 transition-colors">
+            <a href={`/finances?client_id=${clientId}`} className="text-sky-400 text-sm hover:text-sky-300 transition-colors">
               Voir les devis et factures de ce client →
             </a>
           </div>
