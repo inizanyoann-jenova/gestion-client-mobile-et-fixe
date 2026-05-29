@@ -9,6 +9,7 @@ export const InteractionCreateSchema = z.object({
   projet_id: z.string().uuid().nullable().optional(),
 })
 
+// Full replace — all fields required on PUT (UI always sends complete form)
 export const InteractionUpdateSchema = InteractionCreateSchema
 
 export const InteractionListQuerySchema = z.object({

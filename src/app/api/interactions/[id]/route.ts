@@ -37,5 +37,5 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   const { error } = await supabase.from('interactions').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true })
+  return new NextResponse(null, { status: 204 })
 }
