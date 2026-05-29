@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export function EnvoyerFactureButton({ factureId }: { factureId: string }) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
@@ -18,6 +20,7 @@ export function EnvoyerFactureButton({ factureId }: { factureId: string }) {
       return
     }
     setSent(true)
+    router.refresh()
   }
 
   if (sent) return <p className="text-emerald-400 text-sm">Facture envoyée ✓</p>
