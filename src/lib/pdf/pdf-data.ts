@@ -62,7 +62,7 @@ export function buildDevisData(params: {
     total: round2(l.quantite * l.prixUnitaire),
   }))
   const totalHT = round2(lignes.reduce((s, l) => s + l.total, 0))
-  const tva = round2(totalHT * 0.2)
+  const tva = round2(totalHT * 0.085)
   const totalTTC = round2(totalHT + tva)
 
   return {

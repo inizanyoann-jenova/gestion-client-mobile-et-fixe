@@ -15,12 +15,12 @@ describe('buildRapportData', () => {
 })
 
 describe('buildDevisData', () => {
-  it('construit les données avec calcul TVA 20%', () => {
+  it('calcule les données avec TVA 8,5% (DOM)', () => {
     const lignes = [{ description: 'Câblage réseau', quantite: 10, prixUnitaire: 80 }]
     const data = buildDevisData({ client: CLIENT, projet: PROJET, lignes })
     expect(data.totalHT).toBe(800)
-    expect(data.tva).toBe(160)
-    expect(data.totalTTC).toBe(960)
+    expect(data.tva).toBe(68)
+    expect(data.totalTTC).toBe(868)
   })
 
   it('arrondit à 2 décimales', () => {

@@ -71,7 +71,7 @@ export function DevisTemplate({ data }: Props) {
         </View>
         <View style={styles.totalsBox}>
           <View style={styles.totalRow}><Text style={styles.totalLabel}>Total HT</Text><Text>{eur(data.totalHT)}</Text></View>
-          <View style={styles.totalRow}><Text style={styles.totalLabel}>TVA 20%</Text><Text>{eur(data.tva)}</Text></View>
+          <View style={styles.totalRow}><Text style={styles.totalLabel}>TVA 8,5% (DOM)</Text><Text>{eur(data.tva)}</Text></View>
           <View style={styles.totalRow}><Text style={styles.totalTTCText}>Total TTC</Text><Text style={styles.totalTTCText}>{eur(data.totalTTC)}</Text></View>
         </View>
         <Text style={styles.footer}>
