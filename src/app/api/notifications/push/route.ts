@@ -39,9 +39,8 @@ export async function POST(request: NextRequest) {
       await sendPushNotification(sub, parsed.data)
       sent++
     } catch (err) {
-      const isExpired =
-        err instanceof Error &&
-        (err.message.includes('410') || err.message.includes('404'))
+      const statusCode = (err as { statusCode?: number }).statusCode
+      const isExpired = statusCode === 410 || statusCode === 404
       if (isExpired) expired.push(sub.endpoint)
     }
   }

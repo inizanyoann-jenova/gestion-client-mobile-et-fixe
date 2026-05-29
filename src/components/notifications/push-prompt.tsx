@@ -20,10 +20,18 @@ export function PushPrompt() {
   const [subscribed, setSubscribed] = useState(false)
 
   useEffect(() => {
-    if (typeof Notification !== 'undefined') {
-      setPermission(Notification.permission)
-      if (Notification.permission === 'granted') setSubscribed(true)
-    }
+    if (typeof Notification === 'undefined' || !('serviceWorker' in navigator)) return
+    setPermission(Notification.permission)
+    if (Notification.permission !== 'granted') return
+
+    navigator.serviceWorker.ready
+      .then((reg) => reg.pushManager.getSubscription())
+      .then((sub) => {
+        if (sub) setSubscribed(true)
+      })
+      .catch(() => {
+        // service worker not available, leave subscribed=false
+      })
   }, [])
 
   const subscribe = async () => {
