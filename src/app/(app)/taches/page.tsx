@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { TacheCard } from '@/components/taches/tache-card'
 import { TachesFilters } from '@/components/taches/taches-filters'
 import { TacheForm } from '@/components/taches/tache-form'
+import { PushPrompt } from '@/components/notifications/push-prompt'
 import type { Tache } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -97,6 +98,10 @@ export default async function TachesPage({ searchParams }: PageProps) {
           </span>
         </div>
       )}
+
+      <div className="pt-4">
+        <PushPrompt />
+      </div>
     </div>
   )
 }
