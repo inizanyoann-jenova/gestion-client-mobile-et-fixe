@@ -49,7 +49,7 @@ export function PushPrompt() {
           15000
         )
         sw.addEventListener('statechange', () => {
-          if (sw.state === 'activated') { clearTimeout(timer); resolve(reg) }
+          if (sw.state === 'activated') { clearTimeout(timer); resolve(reg!) }
           if (sw.state === 'redundant') { clearTimeout(timer); reject(new Error("Échec d'installation du service worker. Rechargez la page.")) }
         })
       })
