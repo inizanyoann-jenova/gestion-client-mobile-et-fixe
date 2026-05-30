@@ -19,6 +19,13 @@ const STATUT_VARIANT: Record<StatutProjet, 'info' | 'warning' | 'success' | 'dan
   sav: 'danger',
 }
 
+const STATUT_BORDER: Record<StatutProjet, string> = {
+  en_etude: 'border-l-violet-500',
+  en_cours: 'border-l-sky-500',
+  termine: 'border-l-slate-600',
+  sav: 'border-l-red-500',
+}
+
 const SECTEUR_ICON: Record<SecteurProjet, string> = {
   courants_forts: '⚡',
   courants_faibles: '📡',
@@ -35,9 +42,7 @@ export function ProjetCard({ projet }: ProjetCardProps) {
   return (
     <Link
       href={`/projets/${projet.id}`}
-      className={`block bg-slate-800 rounded-xl p-4 active:bg-slate-700 transition-colors ${
-        isSav ? 'border border-red-500/50' : ''
-      }`}
+      className={`block bg-slate-900 border border-slate-800 border-l-4 ${STATUT_BORDER[projet.statut]} rounded-xl p-4 active:scale-[0.98] transition-transform duration-150 hover:border-slate-700`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">

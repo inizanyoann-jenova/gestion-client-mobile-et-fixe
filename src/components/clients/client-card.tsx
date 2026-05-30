@@ -14,6 +14,12 @@ const STATUT_LABEL: Record<StatutClient, string> = {
   inactif: 'Inactif',
 }
 
+const STATUT_BORDER: Record<StatutClient, string> = {
+  actif: 'border-l-sky-500',
+  prospect: 'border-l-violet-500',
+  inactif: 'border-l-slate-600',
+}
+
 const SECTEUR_ICON: Record<Secteur, string> = {
   courants_forts: '⚡',
   courants_faibles: '📡',
@@ -36,7 +42,7 @@ export function ClientCard({ client }: ClientCardProps) {
   return (
     <Link
       href={`/clients/${client.id}`}
-      className="block bg-slate-800 rounded-xl p-4 active:bg-slate-700 transition-colors"
+      className={`block bg-slate-900 border border-slate-800 border-l-4 ${STATUT_BORDER[client.statut]} rounded-xl p-4 active:scale-[0.98] transition-transform duration-150 hover:border-slate-700`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
