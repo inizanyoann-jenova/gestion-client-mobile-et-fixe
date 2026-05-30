@@ -31,6 +31,14 @@ const TYPE_COLOR: Record<TypeInteraction, string> = {
   autre: 'bg-slate-500/20 text-slate-400',
 }
 
+const TYPE_BORDER: Record<TypeInteraction, string> = {
+  appel: 'border-l-sky-500',
+  email: 'border-l-violet-500',
+  visite: 'border-l-emerald-500',
+  reunion: 'border-l-amber-500',
+  autre: 'border-l-slate-600',
+}
+
 export function EchangeCard({ interaction }: EchangeCardProps) {
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -64,7 +72,7 @@ export function EchangeCard({ interaction }: EchangeCardProps) {
   }
 
   return (
-    <div className="bg-slate-800 rounded-xl p-3 space-y-2">
+    <div className={`bg-slate-900 border border-slate-800 border-l-4 ${TYPE_BORDER[interaction.type]} rounded-xl p-3 space-y-2`}>
       <div className="flex items-center gap-2">
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${TYPE_COLOR[interaction.type]}`}>
           {TYPE_LABEL[interaction.type]}
