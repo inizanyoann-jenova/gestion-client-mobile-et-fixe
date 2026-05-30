@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { FinancesKpis } from '@/components/finances/finances-kpis'
+import { ExportExcelButton } from '@/components/finances/export-excel-button'
 import { DevisCard } from '@/components/finances/devis-card'
 import { FactureCard } from '@/components/finances/facture-card'
 import { RapportFinancier } from '@/components/finances/rapport-financier'
@@ -118,12 +119,15 @@ export default async function FinancesPage({
     <div className="p-4 pb-24">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-white">Finances</h1>
-        <Link
-          href="/finances/devis/nouveau"
-          className="text-sm bg-sky-500 text-white px-3 py-1.5 rounded-lg hover:bg-sky-600 transition-colors"
-        >
-          + Devis
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportExcelButton />
+          <Link
+            href="/finances/devis/nouveau"
+            className="text-sm bg-sky-500 text-white px-3 py-1.5 rounded-lg hover:bg-sky-600 transition-colors"
+          >
+            + Devis
+          </Link>
+        </div>
       </div>
 
       <FinancesKpis kpis={kpis} />
