@@ -64,6 +64,12 @@ export function ProjetHeader({ projet }: ProjetHeaderProps) {
           </div>
         </div>
         <div className="flex flex-col items-end gap-2 shrink-0">
+          <Link
+            href={`/projets/${projet.id}/chantier`}
+            className="flex items-center gap-1.5 bg-amber-500/20 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-amber-500/30 transition-colors"
+          >
+            ⛏ Sur chantier
+          </Link>
           <ProjetForm mode="edit" projet={projet} />
           <DeleteProjetButton projetId={projet.id} />
         </div>
