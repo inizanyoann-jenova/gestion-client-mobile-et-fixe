@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { EnvoyerDevisButton } from '@/components/finances/envoyer-devis-button'
 import { ConvertirModal } from '@/components/finances/convertir-modal'
+import { EnvoyerSignatureButton } from '@/components/finances/envoyer-signature-button'
 import type { DevisAvecLignes } from '@/lib/supabase/finance-types'
 
 const STATUT_LABEL: Record<string, string> = {
@@ -82,6 +83,9 @@ export default async function DevisDetailPage({ params }: { params: Promise<{ id
           📥 Télécharger PDF
         </a>
         {['brouillon', 'envoyé'].includes(devis.statut) && <EnvoyerDevisButton devisId={id} />}
+        {['brouillon', 'envoyé'].includes(devis.statut) && (
+          <EnvoyerSignatureButton devisId={id} />
+        )}
         {devis.statut === 'brouillon' && (
           <Link href={`/finances/devis/${id}/modifier`} className="flex items-center gap-2 text-sm bg-slate-700 text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-600 transition-colors font-medium">
             ✏️ Modifier
