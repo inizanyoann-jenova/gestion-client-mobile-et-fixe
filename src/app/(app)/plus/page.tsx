@@ -2,6 +2,7 @@ import { ModuleCard } from '@/components/plus/module-card'
 
 const MODULES = [
   { href: '/finances', icon: '💶', label: 'Finances', description: 'Devis et factures' },
+  { href: '/planning', icon: '📅', label: 'Planning', description: 'Calendrier des échéances' },
   { href: '/echanges', icon: '💬', label: 'Échanges', description: 'Appels, emails, visites' },
   { href: '/documents', icon: '📂', label: 'Documents', description: 'Fichiers et PDF' },
   { href: '/parametres', icon: '⚙️', label: 'Paramètres', description: 'Entreprise et compte' },

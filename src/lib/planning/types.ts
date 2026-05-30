@@ -9,7 +9,7 @@ export interface CalendarEvent {
 
 export interface PlanningData {
   taches: Array<{ id: string; titre: string; date_echeance: string | null; statut: string }>
-  interactions: Array<{ id: string; type: string; notes: string | null; date: string | null }>
+  interactions: Array<{ id: string; type: string; resume: string; date: string }>
   devis: Array<{ id: string; numero: string; statut: string; date_validite: string }>
   factures: Array<{ id: string; numero: string; statut: string; date_echeance: string }>
 }

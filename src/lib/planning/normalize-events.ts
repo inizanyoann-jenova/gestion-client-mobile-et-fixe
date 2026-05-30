@@ -9,7 +9,7 @@ export function normalizeEvents(data: PlanningData): CalendarEvent[] {
   }
 
   for (const i of data.interactions) {
-    if (i.type !== 'visite' || !i.date) continue
+    if (i.type !== 'visite') continue
     events.push({ id: i.id, type: 'visite', label: 'Visite', date: i.date, href: '/echanges', color: 'emerald' })
   }
 
