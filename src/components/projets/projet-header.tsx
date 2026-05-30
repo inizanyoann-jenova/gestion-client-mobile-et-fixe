@@ -39,9 +39,12 @@ interface ProjetHeaderProps {
 
 export function ProjetHeader({ projet }: ProjetHeaderProps) {
   return (
-    <div className="bg-slate-800 px-4 pt-4 pb-5">
-      <Link href="/projets" className="text-sky-400 text-sm block mb-2">
-        ← Projets
+    <div className="bg-gradient-to-r from-sky-950 to-slate-900 border-b border-sky-800/50 px-4 pt-4 pb-5">
+      <Link href="/projets" className="flex items-center gap-1 text-sky-400 text-sm mb-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        Projets
       </Link>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
