@@ -11,14 +11,13 @@ describe('buildCaMensuel', () => {
   })
 
   it('additionne les montants du même mois', () => {
-    const moisCourant = new Date().toISOString().split('T')[0].slice(0, 7) + '-15'
+    const moisCourant = new Date().toISOString().split('T')[0]!.slice(0, 7) + '-15'
     const factures = [
       { date_emission: moisCourant, montant_ttc: 1000 },
       { date_emission: moisCourant, montant_ttc: 500 },
     ]
     const result = buildCaMensuel(factures)
-    const dernier = result[result.length - 1]
-    expect(dernier.ca).toBe(1500)
+    expect(result.at(-1)!.ca).toBe(1500)
   })
 
   it('retourne 0 pour les mois sans facture', () => {
@@ -68,20 +67,21 @@ describe('buildTopClients', () => {
       client_id: `id-${i}`,
       montant_ttc: 1000 - i * 100,
       client: { nom: `Client ${i}` },
+      date_emission: '2026-01-15',
     }))
     expect(buildTopClients(factures)).toHaveLength(5)
   })
 
   it('additionne le CA par client', () => {
     const factures = [
-      { client_id: 'c1', montant_ttc: 2000, client: { nom: 'Client A' } },
-      { client_id: 'c1', montant_ttc: 1000, client: { nom: 'Client A' } },
-      { client_id: 'c2', montant_ttc: 5000, client: { nom: 'Client B' } },
+      { client_id: 'c1', montant_ttc: 2000, client: { nom: 'Client A' }, date_emission: '2026-01-15' },
+      { client_id: 'c1', montant_ttc: 1000, client: { nom: 'Client A' }, date_emission: '2026-02-15' },
+      { client_id: 'c2', montant_ttc: 5000, client: { nom: 'Client B' }, date_emission: '2026-03-15' },
     ]
     const result = buildTopClients(factures)
-    expect(result[0].nom).toBe('Client B')
-    expect(result[0].ca).toBe(5000)
-    expect(result[1].ca).toBe(3000)
+    expect(result[0]!.nom).toBe('Client B')
+    expect(result[0]!.ca).toBe(5000)
+    expect(result[1]!.ca).toBe(3000)
   })
 
   it('retourne tableau vide si aucune facture', () => {
@@ -102,7 +102,6 @@ describe('calcTauxAcceptation', () => {
       { statut: 'refusé' },
       { statut: 'brouillon' },
     ]
-    // 2 acceptés / 3 clôturés = 67%
     expect(calcTauxAcceptation(devis)).toBe(67)
   })
 
