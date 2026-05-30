@@ -138,6 +138,15 @@ export default async function FinancesPage({
         <Link href="/finances?tab=rapport" className={tabClass('rapport')}>Rapport</Link>
       </div>
 
+      <div className="flex justify-end mb-2">
+        <Link
+          href="/finances/pipeline"
+          className="text-xs text-slate-400 hover:text-sky-400 transition-colors"
+        >
+          Vue pipeline →
+        </Link>
+      </div>
+
       {tab === 'devis' && (
         <div className="space-y-3">
           {devis.length === 0 && <p className="text-slate-400 text-sm text-center py-8">Aucun devis</p>}
