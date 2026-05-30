@@ -3,9 +3,19 @@ import Link from 'next/link'
 import { FinancesKpis } from '@/components/finances/finances-kpis'
 import { DevisCard } from '@/components/finances/devis-card'
 import { FactureCard } from '@/components/finances/facture-card'
+import { RapportFinancier } from '@/components/finances/rapport-financier'
+import {
+  buildCaMensuel,
+  buildPipelineDevis,
+  buildTopClients,
+  calcTauxAcceptation,
+} from '@/lib/utils/rapport'
 import type { FinancesKpisData, Devis, Facture } from '@/lib/supabase/finance-types'
+import type { RapportFinancierData } from '@/lib/validations/rapport'
 
-async function getFinancesData(tab: string) {
+type Tab = 'devis' | 'factures' | 'rapport'
+
+async function getFinancesData(tab: Tab) {
   const supabase = await createClient()
   const currentYear = new Date().getFullYear()
 
@@ -23,13 +33,54 @@ async function getFinancesData(tab: string) {
     factures_en_retard: enRetardRes.count ?? 0,
   }
 
+  if (tab === 'rapport') {
+    const date12MoisAgo = new Date()
+    date12MoisAgo.setFullYear(date12MoisAgo.getFullYear() - 1)
+    const dateMoins12Mois = date12MoisAgo.toISOString().split('T')[0]!
+
+    const [facturesPayeesRes, tousDevisRes, topClientsRes] = await Promise.all([
+      supabase
+        .from('factures')
+        .select('date_emission, montant_ttc')
+        .eq('statut', 'payée')
+        .gte('date_emission', dateMoins12Mois),
+      supabase.from('devis').select('statut'),
+      supabase
+        .from('factures')
+        .select('client_id, montant_ttc, client:clients(nom)')
+        .eq('statut', 'payée'),
+    ])
+
+    const devisRows = tousDevisRes.data ?? []
+    const rapport: RapportFinancierData = {
+      caMensuel: buildCaMensuel(facturesPayeesRes.data ?? []),
+      pipelineDevis: buildPipelineDevis(devisRows),
+      topClients: buildTopClients(
+        (topClientsRes.data ?? []) as unknown as {
+          client_id: string
+          montant_ttc: number
+          client: { nom: string } | null
+          date_emission: string
+        }[]
+      ),
+      tauxAcceptation: calcTauxAcceptation(devisRows),
+    }
+
+    return { kpis, rapport, devis: [], factures: [] }
+  }
+
   if (tab === 'factures') {
     const { data } = await supabase
       .from('factures')
       .select('*, client:clients(id, nom)')
       .order('created_at', { ascending: false })
       .limit(20)
-    return { kpis, factures: (data ?? []) as unknown as (Facture & { client: { id: string; nom: string } })[], devis: [] }
+    return {
+      kpis,
+      rapport: null,
+      factures: (data ?? []) as unknown as (Facture & { client: { id: string; nom: string } })[],
+      devis: [],
+    }
   }
 
   const { data } = await supabase
@@ -37,7 +88,12 @@ async function getFinancesData(tab: string) {
     .select('*, client:clients(id, nom)')
     .order('created_at', { ascending: false })
     .limit(20)
-  return { kpis, devis: (data ?? []) as unknown as (Devis & { client: { id: string; nom: string } })[], factures: [] }
+  return {
+    kpis,
+    rapport: null,
+    devis: (data ?? []) as unknown as (Devis & { client: { id: string; nom: string } })[],
+    factures: [],
+  }
 }
 
 export default async function FinancesPage({
@@ -46,8 +102,17 @@ export default async function FinancesPage({
   searchParams: Promise<{ tab?: string }>
 }) {
   const params = await searchParams
-  const tab = params.tab === 'factures' ? 'factures' : 'devis'
-  const { kpis, devis, factures } = await getFinancesData(tab)
+  const tab: Tab =
+    params.tab === 'factures' ? 'factures'
+    : params.tab === 'rapport' ? 'rapport'
+    : 'devis'
+
+  const { kpis, devis, factures, rapport } = await getFinancesData(tab)
+
+  const tabClass = (t: Tab) =>
+    `flex-1 py-2 rounded-xl text-sm font-medium text-center transition-colors ${
+      tab === t ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+    }`
 
   return (
     <div className="p-4 pb-24">
@@ -64,37 +129,30 @@ export default async function FinancesPage({
       <FinancesKpis kpis={kpis} />
 
       <div className="flex gap-2 mt-6 mb-4">
-        <Link
-          href="/finances"
-          className={`flex-1 py-2 rounded-xl text-sm font-medium text-center transition-colors ${
-            tab === 'devis' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
-          }`}
-        >
-          Devis
-        </Link>
-        <Link
-          href="/finances?tab=factures"
-          className={`flex-1 py-2 rounded-xl text-sm font-medium text-center transition-colors ${
-            tab === 'factures' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
-          }`}
-        >
-          Factures
-        </Link>
+        <Link href="/finances" className={tabClass('devis')}>Devis</Link>
+        <Link href="/finances?tab=factures" className={tabClass('factures')}>Factures</Link>
+        <Link href="/finances?tab=rapport" className={tabClass('rapport')}>Rapport</Link>
       </div>
 
       {tab === 'devis' && (
         <div className="space-y-3">
           {devis.length === 0 && <p className="text-slate-400 text-sm text-center py-8">Aucun devis</p>}
-          {devis.map((d) => <DevisCard key={d.id} devis={d} clientNom={(d.client as { nom: string }).nom} />)}
+          {devis.map((d) => (
+            <DevisCard key={d.id} devis={d} clientNom={(d.client as { nom: string }).nom} />
+          ))}
         </div>
       )}
 
       {tab === 'factures' && (
         <div className="space-y-3">
           {factures.length === 0 && <p className="text-slate-400 text-sm text-center py-8">Aucune facture</p>}
-          {factures.map((f) => <FactureCard key={f.id} facture={f} clientNom={(f.client as { nom: string }).nom} />)}
+          {factures.map((f) => (
+            <FactureCard key={f.id} facture={f} clientNom={(f.client as { nom: string }).nom} />
+          ))}
         </div>
       )}
+
+      {tab === 'rapport' && rapport && <RapportFinancier data={rapport} />}
     </div>
   )
 }

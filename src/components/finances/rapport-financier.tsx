@@ -55,7 +55,7 @@ export function RapportFinancier({ data }: { data: RapportFinancierData }) {
                 tick={{ fill: '#94a3b8', fontSize: 10 }}
               />
               <Tooltip
-                formatter={(v: number) => [eur(v), 'CA']}
+                formatter={(v) => [eur(Number(v ?? 0)), 'CA']}
                 contentStyle={{ background: '#1e293b', border: 'none', borderRadius: 8 }}
                 labelStyle={{ color: '#cbd5e1' }}
               />
@@ -139,7 +139,7 @@ export function RapportFinancier({ data }: { data: RapportFinancierData }) {
                   tick={{ fill: '#94a3b8', fontSize: 10 }}
                 />
                 <Tooltip
-                  formatter={(v: number) => [eur(v), 'CA']}
+                  formatter={(v) => [eur(Number(v ?? 0)), 'CA']}
                   contentStyle={{ background: '#1e293b', border: 'none', borderRadius: 8 }}
                   labelStyle={{ color: '#cbd5e1' }}
                 />
