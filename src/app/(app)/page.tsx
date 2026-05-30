@@ -90,9 +90,12 @@ function DashboardSkeleton() {
 export default function DashboardPage() {
   return (
     <div className="p-4 pb-24">
-      <div className="mb-6">
-        <p className="text-slate-400 text-sm">Bonjour 👋</p>
-        <h1 className="text-xl font-bold text-white">ATEXIA</h1>
+      <div className="bg-gradient-to-r from-sky-900 to-sky-700 rounded-2xl p-4 mb-6 flex justify-between items-center">
+        <div>
+          <p className="text-sky-200 text-xs">Bonjour 👋</p>
+          <h1 className="text-white text-xl font-bold">ATEXIA CRM</h1>
+        </div>
+        <span className="text-white/80 text-2xl font-black tracking-tighter" aria-hidden="true">AX</span>
       </div>
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent />
