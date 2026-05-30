@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { FinancesKpisData } from '@/lib/supabase/finance-types'
 
 function eur(n: number): string {
@@ -21,8 +22,12 @@ export function FinancesKpis({ kpis }: { kpis: FinancesKpisData }) {
     <div className="grid grid-cols-2 gap-3">
       <KpiCard label="Devis en cours" value={eur(kpis.devis_en_cours_montant)} icon="📋" colorClass="bg-sky-500/20" />
       <KpiCard label="CA facturé (année)" value={eur(kpis.ca_facture_annee)} icon="💰" colorClass="bg-emerald-500/20" />
-      <KpiCard label="Impayés" value={eur(kpis.montant_impaye)} icon="⏳" colorClass="bg-amber-500/20" />
-      <KpiCard label="En retard" value={String(kpis.factures_en_retard)} icon="🚨" colorClass="bg-red-500/20" />
+      <Link href="/finances/encaissements">
+        <KpiCard label="Impayés" value={eur(kpis.montant_impaye)} icon="⏳" colorClass="bg-amber-500/20 hover:bg-amber-500/30 cursor-pointer transition-colors" />
+      </Link>
+      <Link href="/finances/encaissements">
+        <KpiCard label="En retard" value={String(kpis.factures_en_retard)} icon="🚨" colorClass="bg-red-500/20 hover:bg-red-500/30 cursor-pointer transition-colors" />
+      </Link>
     </div>
   )
 }
