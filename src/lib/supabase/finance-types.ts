@@ -93,3 +93,13 @@ export interface FinancesKpisData {
   montant_impaye: number
   factures_en_retard: number
 }
+
+export interface DevisToken {
+  id: string
+  devis_id: string
+  token: string
+  expires_at: string
+  signed_at: string | null
+  signe_par: string | null
+  created_at: string
+}

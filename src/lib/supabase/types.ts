@@ -475,6 +475,44 @@ export type Database = {
         }
         Relationships: []
       }
+      devis_tokens: {
+        Row: {
+          id: string
+          devis_id: string
+          token: string
+          expires_at: string
+          signed_at: string | null
+          signe_par: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          devis_id: string
+          token?: string
+          expires_at?: string
+          signed_at?: string | null
+          signe_par?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          devis_id?: string
+          token?: string
+          expires_at?: string
+          signed_at?: string | null
+          signe_par?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devis_tokens_devis_id_fkey"
+            columns: ["devis_id"]
+            isOneToOne: false
+            referencedRelation: "devis"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       devis_lignes: {
         Row: {
           id: string
