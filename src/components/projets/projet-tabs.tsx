@@ -5,6 +5,7 @@ import { ProjetDocuments } from './projet-documents'
 import { ProjetTaches } from './projet-taches'
 import { ProjetInteractions } from './projet-interactions'
 import { ProjetNotes } from './projet-notes'
+import { ProjetPhotos } from './projet-photos'
 import type { Tache, Interaction, Document } from '@/lib/supabase/types'
 
 interface ProjetTabsProps {
@@ -20,6 +21,7 @@ const TABS = [
   { id: 'documents', label: 'Documents' },
   { id: 'echanges', label: 'Échanges' },
   { id: 'finances', label: 'Finances' },
+  { id: 'photos', label: 'Photos' },
   { id: 'notes', label: 'Notes' },
 ]
 
@@ -53,6 +55,9 @@ export function ProjetTabs({ projetId, taches, interactions, documents, initialN
         )}
         {activeTab === 'echanges' && (
           <ProjetInteractions interactions={interactions} projetId={projetId} />
+        )}
+        {activeTab === 'photos' && (
+          <ProjetPhotos projetId={projetId} />
         )}
         {activeTab === 'notes' && (
           <ProjetNotes initialNotes={initialNotes} projetId={projetId} />
