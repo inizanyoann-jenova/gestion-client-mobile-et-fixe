@@ -64,7 +64,7 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
   }
 
   return (
-    <div className="bg-slate-800 rounded-xl p-3 flex items-center gap-3">
+    <div className="bg-slate-900 border border-slate-800 border-l-4 border-l-sky-500 rounded-xl p-3 flex items-center gap-3">
       <span className="text-2xl shrink-0">{TYPE_ICON[doc.type]}</span>
 
       <div className="flex-1 min-w-0 space-y-0.5">
