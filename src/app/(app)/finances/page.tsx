@@ -5,6 +5,7 @@ import { ExportExcelButton } from '@/components/finances/export-excel-button'
 import { DevisCard } from '@/components/finances/devis-card'
 import { FactureCard } from '@/components/finances/facture-card'
 import { RapportFinancier } from '@/components/finances/rapport-financier'
+import { SearchModal } from '@/components/search/search-modal'
 import {
   buildCaMensuel,
   buildPipelineDevis,
@@ -120,6 +121,7 @@ export default async function FinancesPage({
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-white">Finances</h1>
         <div className="flex items-center gap-2">
+          <SearchModal />
           <ExportExcelButton />
           <Link
             href="/finances/devis/nouveau"

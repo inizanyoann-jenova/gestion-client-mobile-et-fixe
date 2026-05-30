@@ -6,6 +6,7 @@ import { ProjetsRecents } from '@/components/dashboard/projets-recents'
 import { AlertesIntelligentes } from '@/components/dashboard/alertes-intelligentes'
 import { FabCreate } from '@/components/dashboard/fab-create'
 import { Skeleton } from '@/components/ui/skeleton'
+import { SearchModal } from '@/components/search/search-modal'
 import type { TacheLite, ProjetLite } from '@/lib/validations/dashboard'
 import type { AlerteDevis, AlerteClient } from '@/components/dashboard/alertes-intelligentes'
 
@@ -147,7 +148,10 @@ export default function DashboardPage() {
           <p className="text-sky-200 text-xs">Bonjour 👋</p>
           <h1 className="text-white text-xl font-bold">ATEXIA CRM</h1>
         </div>
-        <span className="text-white/80 text-2xl font-black tracking-tighter" aria-hidden="true">AX</span>
+        <div className="flex items-center gap-3">
+          <SearchModal />
+          <span className="text-white/80 text-2xl font-black tracking-tighter" aria-hidden="true">AX</span>
+        </div>
       </div>
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent />

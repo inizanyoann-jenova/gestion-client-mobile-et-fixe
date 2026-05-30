@@ -4,6 +4,7 @@ import { TacheCard } from '@/components/taches/tache-card'
 import { TachesFilters } from '@/components/taches/taches-filters'
 import { TacheForm } from '@/components/taches/tache-form'
 import { PushPrompt } from '@/components/notifications/push-prompt'
+import { SearchModal } from '@/components/search/search-modal'
 import type { Tache } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -60,7 +61,10 @@ export default async function TachesPage({ searchParams }: PageProps) {
             <span className="ml-2 text-slate-400 text-base font-normal">({count})</span>
           )}
         </h1>
-        <TacheForm />
+        <div className="flex items-center gap-2">
+          <SearchModal />
+          <TacheForm />
+        </div>
       </div>
 
       <Suspense fallback={<div className="h-20 bg-slate-800 rounded-xl animate-pulse" />}>

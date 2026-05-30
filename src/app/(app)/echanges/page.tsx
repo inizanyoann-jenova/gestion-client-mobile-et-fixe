@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { EchangeCard } from '@/components/echanges/echange-card'
 import { EchangesFilters } from '@/components/echanges/echanges-filters'
 import { EchangeForm } from '@/components/echanges/echange-form'
+import { SearchModal } from '@/components/search/search-modal'
 import type { Interaction } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -51,7 +52,10 @@ export default async function EchangesPage({ searchParams }: PageProps) {
             <span className="ml-2 text-slate-400 text-base font-normal">({count})</span>
           )}
         </h1>
-        <EchangeForm />
+        <div className="flex items-center gap-2">
+          <SearchModal />
+          <EchangeForm />
+        </div>
       </div>
 
       <Suspense fallback={<div className="h-20 bg-slate-800 rounded-xl animate-pulse" />}>

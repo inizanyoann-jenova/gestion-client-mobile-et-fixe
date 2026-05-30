@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ProjetCard } from '@/components/projets/projet-card'
 import { ProjetsFilters } from '@/components/projets/projets-filters'
 import { ProjetForm } from '@/components/projets/projet-form'
+import { SearchModal } from '@/components/search/search-modal'
 import type { Projet } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -57,7 +58,10 @@ export default async function ProjetsPage({ searchParams }: PageProps) {
             <span className="ml-2 text-slate-400 text-base font-normal">({count})</span>
           )}
         </h1>
-        <ProjetForm mode="create" />
+        <div className="flex items-center gap-2">
+          <SearchModal />
+          <ProjetForm mode="create" />
+        </div>
       </div>
 
       <ProjetsFilters search={search} statut={statut} secteur={secteur} />

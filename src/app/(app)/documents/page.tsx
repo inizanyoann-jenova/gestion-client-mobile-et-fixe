@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { DocumentCard } from '@/components/documents/document-card'
 import { DocumentsFilters } from '@/components/documents/documents-filters'
 import { DocumentUploadButton } from '@/components/documents/document-upload-button'
+import { SearchModal } from '@/components/search/search-modal'
 import type { Document } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -49,7 +50,10 @@ export default async function DocumentsPage({ searchParams }: PageProps) {
             <span className="ml-2 text-slate-400 text-base font-normal">({count})</span>
           )}
         </h1>
-        <DocumentUploadButton />
+        <div className="flex items-center gap-2">
+          <SearchModal />
+          <DocumentUploadButton />
+        </div>
       </div>
 
       <Suspense fallback={<div className="h-10 bg-slate-800 rounded-xl animate-pulse" />}>

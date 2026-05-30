@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ClientCard } from '@/components/clients/client-card'
 import { ClientsFilters } from '@/components/clients/clients-filters'
 import { ClientForm } from '@/components/clients/client-form'
+import { SearchModal } from '@/components/search/search-modal'
 import type { Client } from '@/lib/supabase/types'
 
 interface PageProps {
@@ -58,7 +59,10 @@ export default async function ClientsPage({ searchParams }: PageProps) {
             <span className="ml-2 text-slate-400 text-base font-normal">({count})</span>
           )}
         </h1>
-        <ClientForm mode="create" />
+        <div className="flex items-center gap-2">
+          <SearchModal />
+          <ClientForm mode="create" />
+        </div>
       </div>
 
       <ClientsFilters search={search} statut={statut} secteur={secteur} />
