@@ -26,6 +26,12 @@ const PRIORITE_LABELS: Record<string, string> = {
   basse: 'Basse',
 }
 
+const PRIORITE_BORDER: Record<string, string> = {
+  haute: 'border-l-red-500',
+  normale: 'border-l-amber-500',
+  basse: 'border-l-slate-600',
+}
+
 export function TacheCard({ tache }: TacheCardProps) {
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -65,7 +71,7 @@ export function TacheCard({ tache }: TacheCardProps) {
 
   return (
     <div
-      className={`bg-slate-800 rounded-xl p-4 flex gap-3 items-start transition-opacity${checked ? ' opacity-50' : ''}`}
+      className={`bg-slate-900 border border-slate-800 border-l-4 ${PRIORITE_BORDER[tache.priorite] ?? 'border-l-slate-600'} rounded-xl p-4 flex gap-3 items-start transition-opacity${checked ? ' opacity-50' : ''}`}
     >
       <button
         onClick={toggleStatut}
