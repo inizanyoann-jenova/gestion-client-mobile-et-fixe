@@ -135,4 +135,42 @@ describe('SearchModal', () => {
     fireEvent.click(await screen.findByText('DEV-2026-001'))
     expect(mockPush).toHaveBeenCalledWith('/finances/devis/d1')
   })
+
+  it('ouvre le modal avec Ctrl+K', () => {
+    render(<SearchModal />)
+    fireEvent.keyDown(document, { key: 'k', ctrlKey: true })
+    expect(screen.getByPlaceholderText(/rechercher/i)).toBeInTheDocument()
+  })
+
+  it('navigue vers /projets/[id] au clic sur un projet', async () => {
+    ;(global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        clients: [], contacts: [], devis: [],
+        projets: [{ id: 'p1', titre: 'Câblage réseau', statut: 'en_cours' }],
+      }),
+    })
+    render(<SearchModal />)
+    fireEvent.click(screen.getByLabelText('Ouvrir la recherche'))
+    fireEvent.change(screen.getByPlaceholderText(/rechercher/i), { target: { value: 'cab' } })
+    await act(async () => { jest.advanceTimersByTime(300) })
+    fireEvent.click(await screen.findByText('Câblage réseau'))
+    expect(mockPush).toHaveBeenCalledWith('/projets/p1')
+  })
+
+  it('navigue vers /clients/[client_id] au clic sur un contact', async () => {
+    ;(global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        clients: [], projets: [], devis: [],
+        contacts: [{ id: 'con1', nom: 'Martin', prenom: 'Sophie', email: 's.martin@test.com', telephone: null, client_id: 'cli1' }],
+      }),
+    })
+    render(<SearchModal />)
+    fireEvent.click(screen.getByLabelText('Ouvrir la recherche'))
+    fireEvent.change(screen.getByPlaceholderText(/rechercher/i), { target: { value: 'mar' } })
+    await act(async () => { jest.advanceTimersByTime(300) })
+    fireEvent.click(await screen.findByText(/Sophie Martin/i))
+    expect(mockPush).toHaveBeenCalledWith('/clients/cli1')
+  })
 })
