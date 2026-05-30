@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import type { SearchResult } from '@/lib/search/types'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
       .limit(5),
     supabase
       .from('contacts')
-      .select('id, nom, email, telephone, client_id')
+      .select('id, nom, prenom, email, telephone, client_id')
       .or(`nom.ilike.%${q}%,email.ilike.%${q}%,telephone.ilike.%${q}%`)
       .limit(5),
     supabase
@@ -34,10 +35,11 @@ export async function GET(request: NextRequest) {
       .limit(5),
   ])
 
-  return NextResponse.json({
+  const result: SearchResult = {
     clients: clientsRes.data ?? [],
     projets: projetsRes.data ?? [],
     contacts: contactsRes.data ?? [],
     devis: devisRes.data ?? [],
-  })
+  }
+  return NextResponse.json(result)
 }
